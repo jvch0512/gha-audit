@@ -1,0 +1,13 @@
+name: release
+on:
+  push:
+    tags: ["v*"]
+permissions: write-all
+jobs:
+  publish:
+    runs-on: [self-hosted, linux]
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: softprops/action-gh-release@v2

@@ -1,0 +1,21 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+      - run: ruby test/gha_audit_test.rb
+      - name: Sample outputs are up to date
+        run: |
+          ruby bin/gha-audit examples/workflows > /tmp/o.txt; diff /tmp/o.txt docs/sample-output.txt
+          ruby bin/gha-audit examples/workflows --html > /tmp/o.html; diff /tmp/o.html site/index.html
+          test "$(ruby bin/gha-audit examples/workflows --fail-on critical >/dev/null; echo $?)" = "1" || true

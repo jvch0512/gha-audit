@@ -1,0 +1,30 @@
+CRITICAL GHA001 pr-bot.yml > build > actions/checkout@v4
+         pull_request_target checks out untrusted pull request code
+         Fix: Do not check out the PR head in a pull_request_target workflow, or split the workflow: build untrusted code under pull_request without secrets, and run privileged steps in a separate workflow_run job.
+HIGH     GHA002 pr-bot.yml > build > Greet
+         ${{ github.event.pull_request.title }} is attacker-controlled and expanded into a shell script
+         Fix: Pass the value through an environment variable and reference it as a shell variable, never inline ${{ }} inside run.
+HIGH     GHA005 pr-bot.yml > build > step 4
+         Remote script piped into a shell
+         Fix: Download, verify a checksum or signature, then run.
+HIGH     GHA007 release.yml > publish
+         Insecure commands re-enabled
+         Fix: Remove ACTIONS_ALLOW_UNSECURE_COMMANDS and use environment files.
+MEDIUM   GHA008 call.yml > deploy
+         Secrets passed to a reusable workflow with inherit
+         Fix: Pass only the secrets the called workflow needs.
+MEDIUM   GHA003 call.yml > deploy > my-org/shared/.github/workflows/deploy.yml@main
+         reusable workflow my-org/shared/.github/workflows/deploy.yml@main is not pinned to a commit SHA
+         Fix: Pin to the full 40-character commit SHA and keep the tag in a comment, so a moved tag cannot change what runs.
+MEDIUM   GHA004 pr-bot.yml
+         No permissions block: the token gets the repository default, often read-write
+         Fix: Set permissions: contents: read at the top and grant more per job only where needed.
+MEDIUM   GHA003 pr-bot.yml > build > some-org/lint-action@v2
+         some-org/lint-action@v2 is not pinned to a commit SHA
+         Fix: Pin to the full 40-character commit SHA and keep the tag in a comment, so a moved tag cannot change what runs.
+MEDIUM   GHA004 release.yml
+         permissions: write-all
+         Fix: Set permissions: contents: read at the top and grant more per job only where needed.
+MEDIUM   GHA003 release.yml > publish > softprops/action-gh-release@v2
+         softprops/action-gh-release@v2 is not pinned to a commit SHA
+         Fix: Pin to the full 40-character commit SHA and keep the tag in a comment, so a moved tag cannot change what runs.

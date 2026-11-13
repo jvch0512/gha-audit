@@ -1,0 +1,8 @@
+name: call
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  deploy:
+    uses: my-org/shared/.github/workflows/deploy.yml@main
+    secrets: inherit
