@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../lib/gha_audit"
+
+USAGE = <<~U
+  gha-audit <workflows-dir> [--json | --html] [--fail-on critical|high|medium]
+
+  Static audit of GitHub Actions workflows (.github/workflows). Offline.
+  Exit codes: 0 ok, 1 findings at or above --fail-on, 2 bad input.
+U
+
+args = ARGV.dup
+if args.empty? || args.first.start_with?("--")
+  warn USAGE
+  exit 2
+end
+dir = args.shift
+fail_on = nil
+if (i = args.index("--fail-on"))
+  fail_on = args[i + 1]
+  unless GhaAudit::SEV.key?(fail_on)
+    warn "error: --fail-on must be critical, high or medium"
+    exit 2
+  end
+end
+begin
+  fs = GhaAudit.audit_dir(dir)
+rescue GhaAudit::Error, SystemCallError => e
+  warn "error: #{e.message}"
+  exit 2
+end
+print(if args.include?("--html") then GhaAudit.page(fs) elsif args.include?("--json") then GhaAudit.json(fs) else GhaAudit.text(fs) end)
+exit 1 if fail_on && fs.any? { |f| GhaAudit::SEV[f.severity] <= GhaAudit::SEV[fail_on] }
