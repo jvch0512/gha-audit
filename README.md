@@ -47,3 +47,7 @@ ruby test/gha_audit_test.rb   # 12 tests, 42 assertions
 ```
 
 MIT.
+
+## Validated on real data
+
+This tool was run on public corpora and the false positives it produced were fixed. Corpus, counts and bugs found are in [docs/validation.md](docs/validation.md).
